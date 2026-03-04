@@ -3347,7 +3347,7 @@ ${state.lang === 'tr' ? 'Her zaman Türkçe yaz. Akıcı, şiirsel ve derin bir 
   let response;
   
   if (state.demoMode) {
-    response = await fetch('https://api.anthropic.com/v1/messages', {
+    response = await fetch('/api/proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3940,7 +3940,7 @@ Bu soruyu kartların ve önceki yorumun çerçevesinde yanıtla.`;
   try {
     let response;
     if (state.demoMode) {
-      response = await fetch('https://api.anthropic.com/v1/messages', {
+      response = await fetch('/api/proxy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
