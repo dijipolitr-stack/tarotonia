@@ -1,0 +1,14 @@
+{
+  "name": "tarotania",
+  "version": "1.0.0",
+  "description": "AI-Powered Tarot Reading Service",
+  "private": true,
+  "scripts": {
+    "generate-codes": "node scripts/generate-codes.js",
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@vercel/kv": "^2.0.0",
+    "uuid": "^9.0.0"
+  }
+}
