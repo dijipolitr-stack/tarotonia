@@ -236,3 +236,4 @@ node scripts/create-etsy-pdf.js TAROT-7X9K2M celtic tr
 
 **Toplam başlangıç maliyeti: ~$12 (domain)**
 **Aylık sabit maliyet: ~$1**
+# deploy
