@@ -1659,15 +1659,7 @@ const TAROT_DECK = {
 // ================================================================
 const SPREADS = [
   {
-    id:'daily',name:'Günün Kartı',nameEn:'Daily Card',
-    icon:'🌅',cards:1,type:'daily',
-    desc:'Günlük rehberlik için tek bir kart çek.',
-    descEn:'Draw a single card for daily guidance.',
-    positions:['Günün Mesajı'],
-    positionsEn:['Message of the Day']
-  },
-  {
-    id:'single',name:'Tek Soru Tek Kart',nameEn:'Single Question',
+    id:'single',name:'Tek Kart',nameEn:'Single Card',
     icon:'🎯',cards:1,type:'single',
     desc:'Aklındaki soruyu sor, bir kart çek ve derinlemesine yorum al.',
     descEn:'Ask your question, draw one card, and get an in-depth interpretation.',
@@ -2218,9 +2210,15 @@ function setupQuestionScreen() {
     document.getElementById('questionTips').textContent = isTr
       ? 'İpucu: Sorun yoksa boş bırakıp devam edebilirsin. Konu zaten belirlendi.'
       : 'Tip: You can leave this blank and continue. Your topic is already set.';
-    document.getElementById('questionInput').placeholder = isTr 
-      ? 'Örn: Önümüzdeki dönemde beni ne bekliyor?' 
-      : 'E.g.: What awaits me in the coming period?';
+    const topicPlaceholders = {
+      love:    { tr: 'Örn: İlişkimde beni ne bekliyor?', en: 'E.g.: What awaits me in my relationship?' },
+      career:  { tr: 'Örn: Kariyerimde önümüzdeki dönemde ne değişecek?', en: 'E.g.: What changes await me in my career?' },
+      family:  { tr: 'Örn: Ailemdeki gerginlik nasıl çözülür?', en: 'E.g.: How can the tension in my family be resolved?' },
+      health:  { tr: 'Örn: Ruhsal dengemle ilgili ne bilmeliyim?', en: 'E.g.: What should I know about my spiritual balance?' },
+      general: { tr: 'Örn: Önümüzdeki dönemde beni ne bekliyor?', en: 'E.g.: What awaits me in the coming period?' }
+    };
+    const tp = topicPlaceholders[state.readingTopic] || topicPlaceholders.general;
+    document.getElementById('questionInput').placeholder = isTr ? tp.tr : tp.en;
     
     textQuestionWrap.style.display = 'block';
     skipBtn.style.display = 'inline-block';
@@ -2237,9 +2235,15 @@ function setupQuestionScreen() {
     document.getElementById('questionTips').textContent = isTr 
       ? 'İpucu: "…meli miyim?", "…olacak mı?", "…doğru mu?" gibi sorular en iyi sonucu verir.' 
       : 'Tip: Questions like "Should I…?", "Will…?", "Is it right to…?" give the best results.';
-    document.getElementById('questionInput').placeholder = isTr 
-      ? 'Örn: Bu iş teklifini kabul etmeli miyim?' 
-      : 'E.g.: Should I accept this job offer?';
+    const ynPlaceholders = {
+      love:    { tr: 'Örn: Bu ilişki benim için doğru mu?', en: 'E.g.: Is this relationship right for me?' },
+      career:  { tr: 'Örn: Bu iş teklifini kabul etmeli miyim?', en: 'E.g.: Should I accept this job offer?' },
+      family:  { tr: 'Örn: Ailemle barışmalı mıyım?', en: 'E.g.: Should I reconcile with my family?' },
+      health:  { tr: 'Örn: Bu tedavi yöntemi bana iyi gelecek mi?', en: 'E.g.: Will this treatment be good for me?' },
+      general: { tr: 'Örn: Bu kararı vermeli miyim?', en: 'E.g.: Should I make this decision?' }
+    };
+    const ynp = ynPlaceholders[state.readingTopic] || ynPlaceholders.general;
+    document.getElementById('questionInput').placeholder = isTr ? ynp.tr : ynp.en;
     
     textQuestionWrap.style.display = 'block';
     skipBtn.style.display = 'none';
@@ -2256,9 +2260,15 @@ function setupQuestionScreen() {
     document.getElementById('questionTips').textContent = isTr 
       ? 'İpucu: Ne kadar spesifik sorarsanız, kart o kadar net konuşur.' 
       : 'Tip: The more specific your question, the clearer the card speaks.';
-    document.getElementById('questionInput').placeholder = isTr 
-      ? 'Örn: Kariyerimde önümüzdeki dönemde beni ne bekliyor?' 
-      : 'E.g.: What awaits me in my career in the coming period?';
+    const singlePlaceholders = {
+      love:    { tr: 'Örn: Aşk hayatımda neye dikkat etmeliyim?', en: 'E.g.: What should I pay attention to in my love life?' },
+      career:  { tr: 'Örn: Kariyerimde doğru yolda mıyım?', en: 'E.g.: Am I on the right path in my career?' },
+      family:  { tr: 'Örn: Ailemle ilişkim nasıl gelişir?', en: 'E.g.: How can my relationship with my family improve?' },
+      health:  { tr: 'Örn: Sağlığım için ne yapmalıyım?', en: 'E.g.: What should I do for my health?' },
+      general: { tr: 'Örn: Hayatımda şu an neye odaklanmalıyım?', en: 'E.g.: What should I focus on in my life right now?' }
+    };
+    const sp = singlePlaceholders[state.readingTopic] || singlePlaceholders.general;
+    document.getElementById('questionInput').placeholder = isTr ? sp.tr : sp.en;
     
     textQuestionWrap.style.display = 'block';
     skipBtn.style.display = 'none';
