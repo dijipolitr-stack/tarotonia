@@ -2969,41 +2969,7 @@ function buildAstroChart(analysis) {
 
 function injectElementChart(narrativeHTML, analysis, isTr) {
   const chart = buildElementChart(analysis);
-  const keywords = ['element', 'ateş', 'su ', 'hava', 'toprak', 'fire', 'water', 'air', 'earth', 'denge', 'balance', 'enerji dağılımı', 'energy distribution'];
-  
-  // Try splitting by <br><br> first (AI narrative), then by </p> (fallback narrative)
-  let paragraphs = narrativeHTML.split(/<br\s*\/?>\s*<br\s*\/?>/i);
-  let joiner = '<br><br>';
-  
-  if(paragraphs.length <= 1) {
-    // Fallback narrative uses <p> tags — split by </p> and rejoin with </p>
-    paragraphs = narrativeHTML.split(/<\/p>/i).filter(p => p.trim().length > 0);
-    joiner = '</p>';
-  }
-  
-  if(paragraphs.length > 1) {
-    let insertIdx = -1;
-    for(let i = 0; i < paragraphs.length; i++) {
-      const lower = paragraphs[i].toLowerCase();
-      if(keywords.some(kw => lower.includes(kw))) {
-        insertIdx = i;
-        break;
-      }
-    }
-    
-    if(insertIdx >= 0) {
-      paragraphs.splice(insertIdx + 1, 0, chart);
-      return paragraphs.join(joiner) + (joiner === '</p>' ? '</p>' : '');
-    }
-  }
-  
-  // Fallback: place chart near end (before last paragraph)
-  if(paragraphs.length > 2) {
-    paragraphs.splice(paragraphs.length - 1, 0, chart);
-    return paragraphs.join(joiner) + (joiner === '</p>' ? '</p>' : '');
-  }
-  
-  // Last resort: append
+  // Element dengesi tüm yorumlardan sonra en sonda gösterilir
   return narrativeHTML + chart;
 }
 
