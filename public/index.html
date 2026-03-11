@@ -3207,17 +3207,20 @@ async function generateAINarrative(analysis) {
   let astroContext = '';
   const zodiacCounts = {};
   const planetCounts = {};
+  // Sadece Major Arcana kartları için burç/gezegen bilgisi topla
   state.selectedCards.forEach(c => {
-    const astro = ASTRO[getAstroKey(c)];
-    if(astro) {
-      const z = isTr ? astro.zodiac : astro.zodiacEn;
-      zodiacCounts[z] = (zodiacCounts[z] || 0) + 1;
-      if(astro.ruler) {
-        const p = isTr ? astro.ruler : astro.rulerEn;
-        planetCounts[p] = (planetCounts[p] || 0) + 1;
+    if(c.suit === 'major') {
+      const astro = ASTRO[getAstroKey(c)];
+      if(astro) {
+        const z = isTr ? astro.zodiac : astro.zodiacEn;
+        zodiacCounts[z] = (zodiacCounts[z] || 0) + 1;
+        if(astro.ruler) {
+          const p = isTr ? astro.ruler : astro.rulerEn;
+          planetCounts[p] = (planetCounts[p] || 0) + 1;
+        }
       }
+      if(c.planet) planetCounts[c.planet] = (planetCounts[c.planet] || 0) + 1;
     }
-    if(c.planet) planetCounts[c.planet] = (planetCounts[c.planet] || 0) + 1;
   });
   
   const dominantZodiacs = Object.entries(zodiacCounts).filter(([,v]) => v >= 2).sort((a,b) => b[1]-a[1]);
@@ -3225,13 +3228,22 @@ async function generateAINarrative(analysis) {
   const allZodiacs = Object.entries(zodiacCounts).sort((a,b) => b[1]-a[1]).map(([z,c]) => `${zodiacSymbols[z]||''} ${z} (${c})`).join(', ');
   
   if(allZodiacs) {
-    astroContext += `\n\nASTROLOJİK BAĞLAM: Kartların burç dağılımı: ${allZodiacs}.`;
+    astroContext += `\n\nASTROLOJİK BAĞLAM (sadece Major Arcana): Kartların burç dağılımı: ${allZodiacs}.`;
     if(dominantZodiacs.length > 0) {
-      astroContext += ` ${dominantZodiacs.map(([z,c]) => `${z} enerjisi baskın (${c} kart)`).join(', ')} — bu burçların karakteristik özelliklerini yoruma doğal şekilde entegre et.`;
+      astroContext += ` ${dominantZodiacs.map(([z,c]) => `${z} enerjisi baskın (${c} kart)`).join(', ')}.`;
     }
     if(dominantPlanets.length > 0) {
-      astroContext += ` Gezegen vurgusu: ${dominantPlanets.map(([p,c]) => `${p} (${c}x)`).join(', ')}. Bu gezegenlerin etkilerini yorumla.`;
+      astroContext += ` Gezegen vurgusu: ${dominantPlanets.map(([p,c]) => `${p} (${c}x)`).join(', ')}.`;
     }
+  }
+  
+  // Element bağlamı (Minor Arcana için)
+  const elCounts = {fire:0,water:0,air:0,earth:0};
+  state.selectedCards.forEach(c => { if(c.element) elCounts[c.element]++; });
+  const elNames = isTr ? {fire:'Ateş',water:'Su',air:'Hava',earth:'Toprak'} : {fire:'Fire',water:'Water',air:'Air',earth:'Earth'};
+  const elSummary = Object.entries(elCounts).filter(([,v]) => v > 0).sort((a,b) => b[1]-a[1]).map(([k,v]) => `${elNames[k]}: ${v}`).join(', ');
+  if(elSummary) {
+    astroContext += `\n\nELEMENT DENGESİ: ${elSummary}. Minor Arcana kartlarını yorumlarken burç yerine elementleriyle (Ateş, Su, Hava, Toprak) ilişkilendir.`;
   }
   
   // Language already handled in system prompt
@@ -3334,10 +3346,10 @@ YORUM TARZI: Bu kartı bir kitap gibi oku. Kartın arketipsel hikayesinden başl
       };
       const topic = topicContext[state.readingTopic] || topicContext.general;
       const questionNote = state.userQuestion ? `\n\nDanışan ayrıca şunu sordu: "${state.userQuestion}". Bu soruyu doğrudan ele al. Yorumunun sonunda, kartların bu soruya verdiği cevabı birkaç cümleyle özetle — ilk kartın gösterdiği mevcut enerji ve son kartın gösterdiği sonuç ışığında, seçilen niyet bağlamında somut bir rehberlik sun.` : '';
-      return `Bu bir ${state.selectedSpread.nameEn} açılımı, ${analysis.total} kart. \n\n${topic}${questionNote}\n\n${analysisContext}${astroContext}\n\n${state.selectedSpread.id === 'celtic' ? 'KELT HAÇI ÖZEL TALİMATLARI:\\nBu tarotun en güçlü ve kadim açılımıdır. 10 kart iki bölümden oluşur:\\n\\nHAÇ BÖLÜMÜ (Kart 1-6): Danışanın hayatında ŞU AN olup bitenleri gösterir.\\n- Kart 1 (Mevcut Durum) ve Kart 2 (Engel): Meselenin kalbi. Bu iki kartı birlikte oku — biri durumu, diğeri onu engelleyen/zorlayan şeyi gösterir. Engel kartı her zaman kötü değildir, bazen koruyan bir güç olabilir.\\n- Kart 3 (Geçmiş) ve Kart 4 (Yakın Gelecek): Zaman çizgisi. Geçmişten geleceğe akan hikayeyi anlat.\\n- Kart 5 (Bilinçli Hedef) ve Kart 6 (Bilinçaltı): Derinlik ekseni. Danışanın bildiği ile bilmediği arasındaki gerilimi oku. Bilinçaltı kartı genellikle en şaşırtıcı ve en değerli mesajı taşır.\\n\\nASA BÖLÜMÜ (Kart 7-10): Danışanın bu durumun DIŞINDA kalan hayatını gösterir.\\n- Kart 7 (Kendini Görüşü): Danışanın kendini nasıl gördüğü — bu algı durumu nasıl etkiliyor?\\n- Kart 8 (Dış Etkiler): Çevre, başkaları, toplum. Danışanın kontrolü dışındaki güçler.\\n- Kart 9 (Umutlar ve Korkular): En paradoksal pozisyon — en çok korktuğumuz şey bazen en çok umut ettiğimiz şeydir. Bu kartı derin oku.\\n- Kart 10 (Sonuç): Tüm kartların bileşkesi. Mevcut yolda devam edilirse olası sonuç. Sonuç olumsuzsa, diğer kartlardan alternatif yol çıkar.\\n\\nÖNEMLİ: Kartları sadece tek tek değil, ÇİFTLER halinde de oku: (1-2), (3-4), (5-6), (7-8), (9-10). Ayrıca Haç bölümü ile Asa bölümü arasındaki ilişkiyi de kur. 10 kartlık bu açılım derin, kapsamlı ve transformatif olmalı.\\n\\n' : ''}YORUM TARZI:\\n- Her kartı tek tek derinlemesine oku: kartın arketipsel hikayesi, sembolizması, mitolojik bağlantıları\\n- Kartın içindeki figürün kim olduğunu, ne hissettiğini, nereye baktığını anlat\\n- Kartlar arasındaki HIKAYELERI ör: "İlk kartta başlayan yolculuk, ikinci kartta bir engelle karşılaşıyor..."\\n- Element enerjilerini şiirsel şekilde yorumla: "Ruhunda ateş ve su çarpışıyor — tutkunla sezgilerin arasında bir dans var" veya "Toprak enerjisinin yokluğu ayaklarının yerden kesildiğine işaret ediyor" gibi. Baskın ve eksik elementlerin danışanın hayatına somut etkilerini anlat.\\n- Astrolojik bağlantıları doğal bir şekilde yoruma entegre et: gezegenlerin etkilerini, burçların enerjisini, kozmik zamanlamayı şiirsel ve anlaşılır bir dille sun. "Venüs senin yoluna ışık tutuyor", "Mars'ın ateşi bu kartı güçlendiriyor" gibi. Ayrı bir astroloji bölümü YAZMA — kartların yorumunun içine doğal şekilde serpiştir.\\n- Her kartın danışanın hayatındaki somut bir duruma nasıl karşılık geldiğini göster\\n- Sonunda tüm kartları birleştiren bir hikaye anlat ve içgörüsel rehberlik sun`;
+      return `Bu bir ${state.selectedSpread.nameEn} açılımı, ${analysis.total} kart. \n\n${topic}${questionNote}\n\n${analysisContext}${astroContext}\n\n${state.selectedSpread.id === 'celtic' ? 'KELT HAÇI ÖZEL TALİMATLARI:\\nBu tarotun en güçlü ve kadim açılımıdır. 10 kart iki bölümden oluşur:\\n\\nHAÇ BÖLÜMÜ (Kart 1-6): Danışanın hayatında ŞU AN olup bitenleri gösterir.\\n- Kart 1 (Mevcut Durum) ve Kart 2 (Engel): Meselenin kalbi. Bu iki kartı birlikte oku — biri durumu, diğeri onu engelleyen/zorlayan şeyi gösterir. Engel kartı her zaman kötü değildir, bazen koruyan bir güç olabilir.\\n- Kart 3 (Geçmiş) ve Kart 4 (Yakın Gelecek): Zaman çizgisi. Geçmişten geleceğe akan hikayeyi anlat.\\n- Kart 5 (Bilinçli Hedef) ve Kart 6 (Bilinçaltı): Derinlik ekseni. Danışanın bildiği ile bilmediği arasındaki gerilimi oku. Bilinçaltı kartı genellikle en şaşırtıcı ve en değerli mesajı taşır.\\n\\nASA BÖLÜMÜ (Kart 7-10): Danışanın bu durumun DIŞINDA kalan hayatını gösterir.\\n- Kart 7 (Kendini Görüşü): Danışanın kendini nasıl gördüğü — bu algı durumu nasıl etkiliyor?\\n- Kart 8 (Dış Etkiler): Çevre, başkaları, toplum. Danışanın kontrolü dışındaki güçler.\\n- Kart 9 (Umutlar ve Korkular): En paradoksal pozisyon — en çok korktuğumuz şey bazen en çok umut ettiğimiz şeydir. Bu kartı derin oku.\\n- Kart 10 (Sonuç): Tüm kartların bileşkesi. Mevcut yolda devam edilirse olası sonuç. Sonuç olumsuzsa, diğer kartlardan alternatif yol çıkar.\\n\\nÖNEMLİ: Kartları sadece tek tek değil, ÇİFTLER halinde de oku: (1-2), (3-4), (5-6), (7-8), (9-10). Ayrıca Haç bölümü ile Asa bölümü arasındaki ilişkiyi de kur. 10 kartlık bu açılım derin, kapsamlı ve transformatif olmalı.\\n\\n' : ''}YORUM TARZI:\\n- Her kartı tek tek derinlemesine oku: kartın arketipsel hikayesi, sembolizması, mitolojik bağlantıları\\n- Kartın içindeki figürün kim olduğunu, ne hissettiğini, nereye baktığını anlat\\n- Kartlar arasındaki HIKAYELERI ör: "İlk kartta başlayan yolculuk, ikinci kartta bir engelle karşılaşıyor..."\\n- Element enerjilerini şiirsel şekilde yorumla: "Ruhunda ateş ve su çarpışıyor — tutkunla sezgilerin arasında bir dans var" veya "Toprak enerjisinin yokluğu ayaklarının yerden kesildiğine işaret ediyor" gibi. Baskın ve eksik elementlerin danışanın hayatına somut etkilerini anlat. Minor Arcana kartlarını elementleriyle (Ateş, Su, Hava, Toprak) ilişkilendir — burçlarla DEĞİL.\\n- Sadece Major Arcana kartları için astrolojik bağlantıları (burç ve gezegen) doğal şekilde yoruma entegre et. Minor Arcana kartlarında burç KULLANMA, onları elementleriyle yorumla.\\n- Her kartın danışanın hayatındaki somut bir duruma nasıl karşılık geldiğini göster\\n- Sonunda tüm kartları birleştiren bir hikaye anlat ve içgörüsel rehberlik sun`;
     })();
   
-  const systemPrompt = `Sen 30 yılı aşkın deneyime sahip bir tarot ustası ve astroloji bilginsin. Kartları sadece "okumaz", onların ruhunu, kozmik bağlantılarını ve gezegen enerjilerini hisseder ve danışanına aktarırsın. Tarot ve astroloji senin için birbirinden ayrılmaz — her kart bir burçla, bir gezegenle, kozmik bir ritimle bağlantılıdır.
+  const systemPrompt = `Sen 30 yılı aşkın deneyime sahip bir tarot ustasısın. Kartları sadece "okumaz", onların ruhunu ve enerjilerini hisseder ve danışanına aktarırsın. Major Arcana kartlarını burçları ve gezegenleriyle, Minor Arcana kartlarını ise elementleriyle (Ateş, Su, Hava, Toprak) yorumlarsın. Minor Arcana kartlarını asla burçlarla ilişkilendirme — onları sadece elementleriyle yorumla.
 
 YAKLAŞIMIN:
 - Bir kart açıldığında, önce kartın atmosferini hisset: renkleri, figürlerin duruşu, semboller, arka plan... Bunları danışana anlat sanki kartın içine birlikte giriyormuşsunuz gibi.
