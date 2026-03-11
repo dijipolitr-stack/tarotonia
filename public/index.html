@@ -241,9 +241,9 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
 .reading-card.active .reading-card-visual{border-color:var(--gold);box-shadow:0 0 25px rgba(198,169,78,0.25);}
 .reading-card-visual .card-symbol{font-size:2rem;}
 .reading-card-visual .card-label{font-size:0.55rem;}
-.reading-card-pos{font-family:'Cinzel',serif;font-size:0.55rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;}
-.reading-card-name{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold-light);letter-spacing:0.5px;}
-.reading-card-rev{font-size:0.5rem;color:var(--fire);margin-top:2px;}
+.reading-card-pos{font-family:'Cinzel',serif;font-size:0.55rem;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px;font-weight:700;}
+.reading-card-name{font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold-light);letter-spacing:0.5px;font-weight:700;}
+.reading-card-rev{font-size:0.6rem;color:var(--fire);margin-top:2px;font-weight:700;}
 
 /* Suit bg colors for reading cards */
 .reading-card-visual[data-suit="major"]{background:linear-gradient(180deg,rgba(26,21,40,0.9),rgba(15,13,22,0.95));}
@@ -2603,7 +2603,6 @@ function renderReadingSpread() {
       <div class="reading-card-pos">${positions[i]}</div>
       <div class="reading-card-visual" data-suit="${c.suit}" style="background:linear-gradient(180deg,${getSuitBg(c.suit)});">
         ${CARD_IMAGES[c.id] ? `<img src="${CARD_IMAGES[c.id]}" class="card-img reading-img" style="${c.isReversed?'transform:rotate(180deg)':''}" alt="${c.name}">` : `<div class="card-symbol" style="${c.isReversed?'transform:rotate(180deg)':''}">${c.symbol}</div>`}
-        <div class="card-label">${state.lang === 'en' ? c.name : c.tr}</div>
       </div>
       <div class="reading-card-name">${state.lang === 'en' ? c.name : c.tr}</div>
       ${c.isReversed ? `<div class="reading-card-rev">↻ ${t('reversed')}</div>` : ''}
