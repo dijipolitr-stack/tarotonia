@@ -320,14 +320,11 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
 .narrative-card-inline img{width:28px;height:42px;border-radius:3px;object-fit:cover;}
 .narrative-card-inline .nci-symbol{font-size:1.1rem;width:28px;text-align:center;}
 .narrative-card-inline .nci-name{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold-light);letter-spacing:0.5px;}
-.narrative-card-block{background:linear-gradient(145deg,rgba(22,19,31,0.9),rgba(18,16,26,0.95));border:1px solid rgba(198,169,78,0.12);border-radius:12px;padding:16px;margin:14px 0;animation:fadeUp 0.5s ease;overflow:hidden;}
-.narrative-card-block .ncb-left{float:left;margin-right:16px;margin-bottom:8px;text-align:center;width:90px;}
-.narrative-card-block .ncb-pos{font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold-light);letter-spacing:0.5px;font-weight:700;margin-bottom:6px;}
-.narrative-card-block img{width:80px;height:120px;border-radius:6px;object-fit:cover;}
-.narrative-card-block .ncb-symbol{font-size:2.5rem;width:80px;text-align:center;}
-.narrative-card-block .ncb-name{font-family:'Cinzel',serif;font-size:0.8rem;color:var(--gold);margin-top:6px;font-weight:600;}
-.narrative-card-block .ncb-reversed{font-size:0.65rem;color:var(--fire);font-weight:700;margin-top:2px;}
-.narrative-card-block .ncb-text{font-size:1rem;line-height:1.8;color:var(--text);}
+.narrative-card-block{display:flex;align-items:center;gap:12px;background:linear-gradient(145deg,rgba(22,19,31,0.9),rgba(18,16,26,0.95));border:1px solid rgba(198,169,78,0.12);border-radius:12px;padding:10px 14px;margin:14px 0;animation:fadeUp 0.5s ease;}
+.narrative-card-block img{width:50px;height:75px;border-radius:5px;object-fit:cover;flex-shrink:0;}
+.narrative-card-block .ncb-symbol{font-size:2rem;width:50px;text-align:center;flex-shrink:0;}
+.narrative-card-block .ncb-pos{font-family:'Cinzel',serif;font-size:0.75rem;color:var(--gold-light);letter-spacing:0.5px;font-weight:700;}
+.narrative-card-block .ncb-name{font-size:0.7rem;color:var(--text-muted);margin-top:2px;}
 
 /* ===== LOGIN SCREEN ===== */
 .login-container{max-width:420px;width:100%;text-align:center;padding:0 20px;}
@@ -406,11 +403,8 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
   .intent-name{font-size:0.7rem;}
   .intent-desc{font-size:0.7rem;}
   .cards-grid.shuffle-gather .tarot-card{margin-left:-54px !important;}
-  .narrative-card-block .ncb-left{width:70px;margin-right:12px;}
-  .narrative-card-block img{width:65px;height:97px;}
-  .narrative-card-block .ncb-symbol{font-size:1.8rem;width:65px;}
-  .narrative-card-block .ncb-name{font-size:0.7rem;}
-  .narrative-card-block .ncb-pos{font-size:0.6rem;}
+  .narrative-card-block img{width:40px;height:60px;}
+  .narrative-card-block .ncb-symbol{font-size:1.5rem;width:40px;}
   .hero-title{font-size:1.8rem;}
   .yesno-label{font-size:1.1rem;}
   .yesno-badge{padding:20px 25px;min-width:auto;}
@@ -3061,22 +3055,20 @@ function injectCardVisuals(narrativeHTML) {
           ? `<img src="${CARD_IMAGES[c.id]}" style="${c.isReversed?'transform:rotate(180deg)':''}" alt="${isTr ? c.tr : c.name}">`
           : `<div class="ncb-symbol" style="${c.isReversed?'transform:rotate(180deg)':''}">${c.symbol}</div>`;
         
-        cardBlocksForThisPara.push(`<div class="ncb-left">
+        cardBlocksForThisPara.push(`<div class="narrative-card-block">
+          ${visual}
+          <div>
             ${posLabel ? `<div class="ncb-pos">${posLabel}</div>` : ''}
-            ${visual}
-            <div class="ncb-name">${isTr ? c.tr : c.name}</div>
-            ${c.isReversed ? '<div class="ncb-reversed">↻ Ters</div>' : ''}
-          </div>`);
+            <div class="ncb-name">${isTr ? c.tr : c.name}${c.isReversed ? ' ↻' : ''}</div>
+          </div>
+        </div>`);
       }
     }
     
     if(cardBlocksForThisPara.length > 0) {
-      // Kart görseli ve yorum metni aynı blokta — kart solda, metin sağda
-      const cardHTML = cardBlocksForThisPara.join('');
-      result.push(`<div class="narrative-card-block">${cardHTML}<div class="ncb-text">${paragraphs[p]}</div></div>`);
-    } else {
-      result.push(paragraphs[p]);
+      result.push(cardBlocksForThisPara.join(''));
     }
+    result.push(paragraphs[p]);
   }
   
   return result.join('<br><br>');
