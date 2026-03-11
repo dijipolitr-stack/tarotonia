@@ -3087,8 +3087,8 @@ function injectCardVisuals(narrativeHTML) {
         cardBlocksForThisPara.push(`<div class="narrative-card-block">
           ${visual}
           <div>
-            <div class="ncb-info">${isTr ? c.tr : c.name}${c.isReversed ? ' ↻' : ''}</div>
-            ${posLabel ? `<div class="ncb-pos">${posLabel}</div>` : ''}
+            ${posLabel ? `<div class="ncb-info">${posLabel}</div>` : ''}
+            <div class="ncb-pos">${isTr ? c.tr : c.name}${c.isReversed ? ' ↻' : ''}</div>
           </div>
         </div>`);
       }
