@@ -3196,9 +3196,11 @@ async function generateAINarrative(analysis) {
     const uprightData = c.upright;
     const arcana = c.suit === 'major' ? 'Major Arcana' : 'Minor Arcana';
     const suitMeaning = {wands:'Ateş/Tutku/Yaratıcılık',cups:'Su/Duygular/Sezgi',swords:'Hava/Zihin/Gerçek',pentacles:'Toprak/Madde/Beden',major:'Kozmik Ders'}[c.suit] || '';
+    const elementInfo = {wands:'Ateş — tutku, enerji, irade gücü',cups:'Su — duygular, sezgi, ruhsal bağlar',swords:'Hava — düşünce, iletişim, zihinsel berraklık',pentacles:'Toprak — maddi dünya, beden, pratik yaşam'}[c.suit] || '';
     const astro = ASTRO[getAstroKey(c)];
-    const astroInfo = astro ? `, Burç: ${isTr ? astro.zodiac : astro.zodiacEn} ${zodiacSymbols[isTr ? astro.zodiac : astro.zodiacEn] || ''}${astro.ruler ? ', Yönetici Gezegen: '+(isTr ? astro.ruler : astro.rulerEn) : ''}${astro.decan ? ' ('+astro.decan+')' : ''}` : '';
-    return `Pozisyon ${i+1} (${positions[i]}): ${c.name} (${c.tr})${c.isReversed ? ' [TERS]' : ''} — ${arcana}, ${suitMeaning}, Sayı: ${c.num}${c.planet ? ', Gezegen: '+c.planet : ''}${astroInfo}. Anahtar temalar: ${data.keywords.join(', ')}. Ana mesaj: ${data.meaning}. Aşk boyutu: ${data.love}. Kariyer boyutu: ${data.career}. Bilgelik: ${data.advice}`;
+    const astroInfo = c.suit === 'major' && astro ? `, Burç: ${isTr ? astro.zodiac : astro.zodiacEn} ${zodiacSymbols[isTr ? astro.zodiac : astro.zodiacEn] || ''}${astro.ruler ? ', Yönetici Gezegen: '+(isTr ? astro.ruler : astro.rulerEn) : ''}${astro.decan ? ' ('+astro.decan+')' : ''}` : '';
+    const elInfo = c.suit !== 'major' ? `, Element: ${elementInfo}` : '';
+    return `${positions[i]}: ${c.name} (${c.tr})${c.isReversed ? ' [TERS]' : ''} — ${arcana}, ${suitMeaning}, Sayı: ${c.num}${c.planet ? ', Gezegen: '+c.planet : ''}${astroInfo}${elInfo}. Anahtar temalar: ${data.keywords.join(', ')}. Ana mesaj: ${data.meaning}. Aşk boyutu: ${data.love}. Kariyer boyutu: ${data.career}. Bilgelik: ${data.advice}`;
   }).join('\n');
   
   // Build astrological context
