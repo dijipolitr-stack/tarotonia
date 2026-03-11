@@ -3036,6 +3036,11 @@ function injectCardVisuals(narrativeHTML) {
   
   let result = [];
   for(let p = 0; p < paragraphs.length; p++) {
+    // İlk paragraf genel yorum — kart görseli ekleme, temiz bırak
+    if(p === 0) {
+      result.push(paragraphs[p]);
+      continue;
+    }
     const paraLower = paragraphs[p].toLowerCase();
     let cardBlocksForThisPara = [];
     
