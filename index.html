@@ -127,6 +127,7 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
 .spread-name{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:8px;letter-spacing:1px;}
 .spread-info{color:var(--text-muted);font-size:0.9rem;line-height:1.6;margin-bottom:15px;}
 .spread-positions{font-size:0.78rem;color:var(--accent-glow);line-height:1.7;}
+.spread-icon-wrap{display:flex;align-items:flex-start;gap:14px;}
 
 /* ===== CARD SELECTION ===== */
 #card-select{padding-top:100px;}
@@ -382,7 +383,13 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
   .reading-spread{gap:10px;}
   .reading-card-visual{width:75px;height:112px;}
   .reading-card-visual .card-symbol{font-size:1.5rem;}
-  .spreads-grid{grid-template-columns:1fr;}
+  .spreads-grid{grid-template-columns:1fr;gap:12px;}
+  .spread-card{padding:16px 18px;}
+  .spread-icon{font-size:2rem;margin-bottom:10px;}
+  .spread-name{font-size:0.95rem;margin-bottom:5px;letter-spacing:0.5px;}
+  .spread-info{font-size:0.8rem;margin-bottom:8px;line-height:1.5;}
+  .spread-positions{font-size:0.72rem;line-height:1.6;}
+  .spread-text{display:block;}
   .intent-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
   .intent-card{padding:18px 10px;}
   .intent-icon{font-size:1.6rem;margin-bottom:6px;}
@@ -510,7 +517,7 @@ html.light .lang-btn.active{background:var(--gold);color:#fff;border-color:var(-
     <button class="btn btn-primary" id="startReadingBtn" onclick="startCardSelection()" disabled data-i18n="continue_btn">Devam Et</button>
   </div>
 
-  <div class="spreads-grid" id="spreadsGrid" style="max-height:55vh;overflow-y:auto;"></div>
+  <div class="spreads-grid" id="spreadsGrid"></div>
 </section>
 
 <!-- QUESTION INPUT -->
@@ -2080,9 +2087,11 @@ function renderSpreads() {
     return `
     <div class="spread-card" data-spread="${s.id}" onclick="selectSpread('${s.id}')">
       <div class="spread-icon">${s.icon}</div>
-      <div class="spread-name">${lang === 'en' ? s.nameEn : s.name}</div>
-      <div class="spread-info">${lang === 'en' ? s.descEn : s.desc} (${s.cards} ${lang === 'en' ? 'cards' : 'kart'})</div>
-      <div class="spread-positions">${pos.map((p,i) => `${i+1}. ${p}`).join(' • ')}</div>
+      <div class="spread-text">
+        <div class="spread-name">${lang === 'en' ? s.nameEn : s.name}</div>
+        <div class="spread-info">${lang === 'en' ? s.descEn : s.desc} (${s.cards} ${lang === 'en' ? 'cards' : 'kart'})</div>
+        <div class="spread-positions">${pos.map((p,i) => `${i+1}. ${p}`).join(' • ')}</div>
+      </div>
     </div>`;
   }).join('');
 }
