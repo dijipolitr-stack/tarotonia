@@ -1805,7 +1805,6 @@ let state = {
   readingTopicName: '',
   sessionToken: null,
   allowedSpread: null,
-  demoMode: false,
   followUpUsed: false,
   lastNarrative: ''
 };
@@ -1834,24 +1833,6 @@ async function validateAccessCode() {
   btnText.innerHTML = '<span class="login-spinner"></span> Doğrulanıyor...';
   errorEl.textContent = '';
   
-  // ========== DEMO MODE ==========
-  // Test kodu — deploy sonrası bu blok kaldırılacak
-  if (code === 'TAROT-DEMO00') {
-    state.sessionToken = 'demo-' + Date.now();
-    state.allowedSpread = 'all';
-    state.demoMode = true;
-    
-    btnText.innerHTML = '✓ Demo Kod Doğrulandı!';
-    btn.style.borderColor = '#4BAF6E';
-    btn.style.color = '#4BAF6E';
-    
-    setTimeout(() => {
-      showSection('intent-select');
-    }, 800);
-    return;
-  }
-  // ========== END DEMO MODE ==========
-  
   try {
     const res = await fetch('/api/validate-code', {
       method: 'POST',
@@ -1871,8 +1852,7 @@ async function validateAccessCode() {
     // Success! Store session
     state.sessionToken = data.session_token;
     state.allowedSpread = data.spread_type;
-    state.demoMode = false;
-    
+
     // Find the matching spread
     const spread = SPREADS.find(s => s.id === data.spread_type);
     if (!spread) {
@@ -2158,11 +2138,10 @@ function proceedFromIntent() {
   badge.textContent = `${intent.icon} ${state.readingTopicName}`;
   badge.style.display = 'inline-block';
   
-  // If spread is already determined (production code), skip spread-select
-  if (state.selectedSpread && !state.demoMode) {
+  // Spread is determined by the validated access code → skip spread-select
+  if (state.selectedSpread) {
     setupQuestionScreen();
   } else {
-    // Demo mode or free browse: show spread selection
     renderSpreads();
     showSection('spread-select');
   }
@@ -3360,45 +3339,25 @@ ${state.lang === 'tr' ? 'Her zaman Türkçe yaz. Akıcı, şiirsel ve derin bir 
   
   const userPrompt = `Açılım: ${state.selectedSpread.name} (${state.selectedSpread.nameEn})${state.readingTopicName ? `\nOkuma Konusu: ${state.readingTopicName}` : ''}${state.userQuestion ? `\nDanışanın Sorusu: "${state.userQuestion}"` : ''}\n\nKartlar:\n${cardDescriptions}\n\n${spreadContext}\n\n${state.selectedSpread.type === 'daily' ? '250-400' : state.selectedSpread.type === 'single' ? '500-800' : state.selectedSpread.type === 'yesno' ? '300-450' : state.selectedSpread.id === 'celtic' ? '1500-2500' : state.selectedSpread.id === 'year' ? '1500-2500' : '800-1500'} kelime yaz. Her kartı derinlemesine yorumla — sembolizması, arketipsel anlamı, danışanın hayatına yansıması. Teknik analiz değil, ruhsal bir yolculuk olsun.`;
 
-  // Demo mode: call Anthropic directly (artifact environment handles auth)
-  // Production: call through secure backend proxy
-  let response;
-  
-  if (state.demoMode) {
-    response = await fetch('/api/proxy', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 6000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
-    
-    if (!response.ok) throw new Error('AI reading failed');
-    const data = await response.json();
-    return data.content[0].text.replace(/\n/g, '<br>');
-  } else {
-    response = await fetch('/api/reading', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        session_token: state.sessionToken,
-        system_prompt: systemPrompt,
-        user_prompt: userPrompt,
-        max_tokens: 4000
-      })
-    });
-    
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || 'AI reading failed');
-    }
-    
-    const data = await response.json();
-    return data.content[0].text.replace(/\n/g, '<br>');
+  // Call through the secure backend (validates the access code server-side)
+  const response = await fetch('/api/reading', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      session_token: state.sessionToken,
+      system_prompt: systemPrompt,
+      user_prompt: userPrompt,
+      max_tokens: 4000
+    })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.error || 'AI reading failed');
   }
+
+  const data = await response.json();
+  return data.content[0].text.replace(/\n/g, '<br>');
 }
 
 function buildSingleFallbackNarrative(card, data) {
@@ -3956,31 +3915,17 @@ Danışanın ek sorusu: "${question}"
 Bu soruyu kartların ve önceki yorumun çerçevesinde yanıtla.`;
 
   try {
-    let response;
-    if (state.demoMode) {
-      response = await fetch('/api/proxy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1500,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userPrompt }]
-        })
-      });
-    } else {
-      response = await fetch('/api/reading', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          session_token: state.sessionToken,
-          system_prompt: systemPrompt,
-          user_prompt: userPrompt,
-          max_tokens: 1500
-        })
-      });
-    }
-    
+    const response = await fetch('/api/reading', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_token: state.sessionToken,
+        system_prompt: systemPrompt,
+        user_prompt: userPrompt,
+        max_tokens: 1500
+      })
+    });
+
     if(!response.ok) throw new Error('Follow-up failed');
     const data = await response.json();
     const answer = data.content[0].text.replace(/\n/g, '<br>');
@@ -4013,7 +3958,6 @@ function resetAll() {
   state.readingTopicName = '';
   state.sessionToken = null;
   state.allowedSpread = null;
-  state.demoMode = false;
   state.followUpUsed = false;
   state.lastNarrative = '';
   document.getElementById('followUpSection').style.display = 'none';

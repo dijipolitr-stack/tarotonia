@@ -1,9 +1,9 @@
-# 🔮 Tarotania - Kurulum ve Deploy Rehberi
+# 🔮 Tarotonia - Kurulum ve Deploy Rehberi
 
 ## Proje Yapısı
 
 ```
-tarotania/
+tarotonia/
 ├── api/
 │   ├── validate-code.js      # Erişim kodu doğrulama
 │   ├── reading.js             # AI yorum proxy (API key güvenliği)
@@ -30,16 +30,16 @@ tarotania/
 
 ```bash
 # Proje klasörüne git
-cd tarotania
+cd tarotonia
 
 # Git başlat
 git init
 git add .
-git commit -m "Initial commit - Tarotania"
+git commit -m "Initial commit - Tarotonia"
 
 # GitHub'da yeni repo oluştur (github.com/new)
 # Sonra bağla:
-git remote add origin https://github.com/KULLANICI_ADIN/tarotania.git
+git remote add origin https://github.com/KULLANICI_ADIN/tarotonia.git
 git branch -M main
 git push -u origin main
 ```
@@ -48,7 +48,7 @@ git push -u origin main
 
 1. **https://vercel.com** adresine git
 2. **"Sign Up with GitHub"** tıkla → GitHub hesabınla giriş yap
-3. **"Import Project"** → GitHub'dan `tarotania` reposunu seç
+3. **"Import Project"** → GitHub'dan `tarotonia` reposunu seç
 4. **Framework Preset**: "Other" seç
 5. **Deploy** tıkla → İlk deploy başlayacak (henüz çalışmaz, sorun değil)
 
@@ -57,7 +57,7 @@ git push -u origin main
 1. Vercel Dashboard'da projenin sayfasına git
 2. **"Storage"** sekmesine tıkla
 3. **"Create Database"** → **"KV"** seç
-4. İsim ver: `tarotania-db`
+4. İsim ver: `tarotonia-db`
 5. **"Create"** tıkla
 6. Otomatik olarak KV_REST_API_URL ve KV_REST_API_TOKEN eklenir
 
@@ -84,12 +84,12 @@ Environment variable'lar eklendikten sonra:
 
 ### 6. Test Et
 
-Deploy tamamlandıktan sonra Vercel sana bir URL verir (ör: `tarotania-xyz.vercel.app`).
+Deploy tamamlandıktan sonra Vercel sana bir URL verir (ör: `tarotonia-xyz.vercel.app`).
 
 **Test kodu üret:**
 ```bash
 # curl ile admin API'yi çağır
-curl -X POST https://tarotania-xyz.vercel.app/api/admin/generate-codes \
+curl -X POST https://tarotonia-xyz.vercel.app/api/admin/generate-codes \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer SENIN_ADMIN_SECRET" \
   -d '{"spread_type": "three", "count": 2}'
@@ -205,7 +205,7 @@ node scripts/create-etsy-pdf.js TAROT-7X9K2M celtic tr
 
 ## 🌐 Custom Domain (İsteğe Bağlı)
 
-1. Namecheap/Cloudflare'den domain satın al (ör: tarotania.com)
+1. Namecheap/Cloudflare'den domain satın al (ör: tarotonia.com)
 2. Vercel Dashboard → Settings → Domains → domain'i ekle
 3. DNS ayarlarını Vercel'in gösterdiği şekilde yap
 4. HTTPS otomatik aktif olur
@@ -236,4 +236,3 @@ node scripts/create-etsy-pdf.js TAROT-7X9K2M celtic tr
 
 **Toplam başlangıç maliyeti: ~$12 (domain)**
 **Aylık sabit maliyet: ~$1**
-# deploy

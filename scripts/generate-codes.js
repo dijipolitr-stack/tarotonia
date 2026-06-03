@@ -41,7 +41,7 @@ async function generateCodes(spreadType, count) {
     process.exit(1);
   }
 
-  console.log(`\n🔮 Tarotania - Kod Üretici`);
+  console.log(`\n🔮 Tarotonia - Kod Üretici`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 
   const types = spreadType === 'all' ? Object.keys(SPREAD_TYPES) : [spreadType];
@@ -100,7 +100,7 @@ async function generateCodes(spreadType, count) {
 const args = process.argv.slice(2);
 if (args.length < 1) {
   console.log(`
-🔮 Tarotania - Kod Üretici
+🔮 Tarotonia - Kod Üretici
 
 Kullanım: node scripts/generate-codes.js <spread_type> [count]
 

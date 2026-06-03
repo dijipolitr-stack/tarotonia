@@ -177,7 +177,7 @@ function generatePDFHTML(code, spreadType, lang = 'tr') {
 <body>
   <div class="card">
     <div class="logo">🔮</div>
-    <h1 class="title">Tarotania</h1>
+    <h1 class="title">Tarotonia</h1>
     <p class="subtitle">${isTr ? 'Kişiselleştirilmiş AI Tarot Okuması' : 'Personalized AI Tarot Reading'}</p>
     
     <div class="spread-badge">✦ ${spreadName} (${spread.cards} ${isTr ? 'Kart' : 'Cards'}) ✦</div>
