@@ -1,7 +1,7 @@
 // /api/reading.js
 // Proxies AI reading requests. Requires a valid session token tied to a paid,
 // unused access code. Marks the code as permanently used upon success.
-const { kv } = require('@vercel/kv');
+const { kv } = require('../lib/kv');
 
 // One purchased code allows the main reading plus a follow-up question.
 // A small buffer guards against transient retries. This hard-caps the total

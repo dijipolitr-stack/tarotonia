@@ -1,7 +1,7 @@
 // /api/validate-code.js
 // Validates an access code and returns a session token + allowed spread type
 
-const { kv } = require('@vercel/kv');
+const { kv } = require('../lib/kv');
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = async function handler(req, res) {

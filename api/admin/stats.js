@@ -1,7 +1,7 @@
 // /api/admin/stats.js
 // Admin endpoint to check code stats and list recent codes
 
-const { kv } = require('@vercel/kv');
+const { kv } = require('../../lib/kv');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

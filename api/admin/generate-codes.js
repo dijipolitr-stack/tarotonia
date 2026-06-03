@@ -2,7 +2,7 @@
 // Admin endpoint to generate access codes
 // Protected by ADMIN_SECRET environment variable
 
-const { kv } = require('@vercel/kv');
+const { kv } = require('../../lib/kv');
 
 // Spread type definitions matching frontend
 const SPREAD_TYPES = {

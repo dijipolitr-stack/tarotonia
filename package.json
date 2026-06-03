@@ -8,7 +8,7 @@
     "dev": "vercel dev"
   },
   "dependencies": {
-    "@vercel/kv": "^2.0.0",
+    "ioredis": "^5.4.1",
     "uuid": "^9.0.0"
   }
 }
