@@ -74,15 +74,16 @@ module.exports = async function handler(req, res) {
     const Redis = require('ioredis');
     const url = process.env.KV_REDIS_URL || '';
     const probe = (useTls) => new Promise((resolve) => {
-      const opts = { lazyConnect: true, connectTimeout: 6000, maxRetriesPerRequest: 1, retryStrategy: () => null };
-      if (useTls) opts.tls = {};
+      const opts = { lazyConnect: true, connectTimeout: 8000, maxRetriesPerRequest: 1, retryStrategy: () => null };
+      if (useTls) opts.tls = { rejectUnauthorized: false };
+      let firstErr = null;
       let c;
-      try { c = new Redis(url, opts); } catch (e) { return resolve({ ok: false, code: e.code, msg: e.message }); }
-      c.on('error', () => {});
+      try { c = new Redis(url, opts); } catch (e) { return resolve({ ok: false, ctor: e.message }); }
+      c.on('error', (e) => { if (!firstErr) firstErr = { code: e.code, msg: e.message }; });
       c.connect()
         .then(() => c.ping())
         .then((r) => { resolve({ ok: true, ping: r }); try { c.disconnect(); } catch {} })
-        .catch((e) => { resolve({ ok: false, code: e.code, msg: e.message }); try { c.disconnect(); } catch {} });
+        .catch((e) => { resolve({ ok: false, connectErr: e.message, socketErr: firstErr }); try { c.disconnect(); } catch {} });
     });
     const plain = await probe(false);
     const tls = await probe(true);
