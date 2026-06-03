@@ -77,10 +77,19 @@ module.exports = async function handler(req, res) {
         msg: error && error.message,
         code: error && error.code,
         url_scheme: (process.env.KV_REDIS_URL || '').split('://')[0] || null,
-        // İsimler güvenli (değer yok). Hangi REST/Redis kimlikleri mevcut?
-        env_keys: Object.keys(process.env)
-          .filter((k) => /REDIS|KV|UPSTASH/i.test(k))
-          .sort()
+        // Sadece host+port (parola/kullanıcı YOK) — sağlayıcıyı tespit için.
+        host: (() => {
+          try {
+            const u = new URL((process.env.KV_REDIS_URL || '').replace(/^rediss?:\/\//, 'https://'));
+            return u.hostname;
+          } catch { return null; }
+        })(),
+        port: (() => {
+          try {
+            const u = new URL((process.env.KV_REDIS_URL || '').replace(/^rediss?:\/\//, 'https://'));
+            return u.port || null;
+          } catch { return null; }
+        })()
       }
     });
   }
