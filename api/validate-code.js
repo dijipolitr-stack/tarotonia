@@ -70,6 +70,17 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Validate code error:', error);
-    return res.status(500).json({ error: 'Sunucu hatası / Server error' });
+    // TEMP DEBUG — sebebi bulduktan sonra geri alınacak. Gizli değer sızdırmaz.
+    return res.status(500).json({
+      error: 'Sunucu hatası / Server error',
+      _debug: {
+        msg: error && error.message,
+        code: error && error.code,
+        has_KV_REDIS_URL: !!process.env.KV_REDIS_URL,
+        has_REDIS_URL: !!process.env.REDIS_URL,
+        has_KV_URL: !!process.env.KV_URL,
+        url_scheme: (process.env.KV_REDIS_URL || '').split('://')[0] || null
+      }
+    });
   }
 };
