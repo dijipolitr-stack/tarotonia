@@ -76,10 +76,11 @@ module.exports = async function handler(req, res) {
       _debug: {
         msg: error && error.message,
         code: error && error.code,
-        has_KV_REDIS_URL: !!process.env.KV_REDIS_URL,
-        has_REDIS_URL: !!process.env.REDIS_URL,
-        has_KV_URL: !!process.env.KV_URL,
-        url_scheme: (process.env.KV_REDIS_URL || '').split('://')[0] || null
+        url_scheme: (process.env.KV_REDIS_URL || '').split('://')[0] || null,
+        // İsimler güvenli (değer yok). Hangi REST/Redis kimlikleri mevcut?
+        env_keys: Object.keys(process.env)
+          .filter((k) => /REDIS|KV|UPSTASH/i.test(k))
+          .sort()
       }
     });
   }
