@@ -70,27 +70,22 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Validate code error:', error);
-    // TEMP DEBUG — sebebi bulduktan sonra geri alınacak. Gizli değer sızdırmaz.
-    return res.status(500).json({
-      error: 'Sunucu hatası / Server error',
-      _debug: {
-        msg: error && error.message,
-        code: error && error.code,
-        url_scheme: (process.env.KV_REDIS_URL || '').split('://')[0] || null,
-        // Sadece host+port (parola/kullanıcı YOK) — sağlayıcıyı tespit için.
-        host: (() => {
-          try {
-            const u = new URL((process.env.KV_REDIS_URL || '').replace(/^rediss?:\/\//, 'https://'));
-            return u.hostname;
-          } catch { return null; }
-        })(),
-        port: (() => {
-          try {
-            const u = new URL((process.env.KV_REDIS_URL || '').replace(/^rediss?:\/\//, 'https://'));
-            return u.port || null;
-          } catch { return null; }
-        })()
-      }
+    // TEMP DEBUG — düz vs TLS bağlantıyı tek tek dene, gerçek hatayı raporla.
+    const Redis = require('ioredis');
+    const url = process.env.KV_REDIS_URL || '';
+    const probe = (useTls) => new Promise((resolve) => {
+      const opts = { lazyConnect: true, connectTimeout: 6000, maxRetriesPerRequest: 1, retryStrategy: () => null };
+      if (useTls) opts.tls = {};
+      let c;
+      try { c = new Redis(url, opts); } catch (e) { return resolve({ ok: false, code: e.code, msg: e.message }); }
+      c.on('error', () => {});
+      c.connect()
+        .then(() => c.ping())
+        .then((r) => { resolve({ ok: true, ping: r }); try { c.disconnect(); } catch {} })
+        .catch((e) => { resolve({ ok: false, code: e.code, msg: e.message }); try { c.disconnect(); } catch {} });
     });
+    const plain = await probe(false);
+    const tls = await probe(true);
+    return res.status(500).json({ error: 'Sunucu hatası / Server error', _debug: { plain, tls } });
   }
 };
