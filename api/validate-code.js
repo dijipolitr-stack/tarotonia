@@ -70,6 +70,14 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Validate code error:', error);
-    return res.status(500).json({ error: 'Sunucu hatası / Server error' });
+    // TEMP DEBUG — Upstash hangi değişkenleri ekledi, redis:// URL var mı?
+    return res.status(500).json({
+      error: 'Sunucu hatası / Server error',
+      _debug: {
+        msg: error && error.message,
+        env_keys: Object.keys(process.env).filter((k) => /REDIS|KV|UPSTASH/i.test(k)).sort(),
+        found_redis_url: Object.values(process.env).some((v) => typeof v === 'string' && /^rediss?:\/\//.test(v))
+      }
+    });
   }
 };
