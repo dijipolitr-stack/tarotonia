@@ -1,0 +1,25 @@
+{
+ "name": "فاطمة",
+ "lang": "ar",
+ "date": "2026-08-19",
+ "spread": "Three Card Spread",
+ "signature": "Tarotonia",
+ "cards": [
+  {
+   "id": "m0",
+   "name": "Joker",
+   "reversed": false
+  },
+  {
+   "id": "m6",
+   "name": "Aşıklar",
+   "reversed": true
+  },
+  {
+   "id": "m17",
+   "name": "Yıldız",
+   "reversed": false
+  }
+ ],
+ "body": "عندما فتحت أوراقك شعرت بشيء من العتبة.\n\nالبطاقة الأولى هي المهرج.\n\nالعشاق مقلوبة.\n\nالنجمة تعني الشفاء."
+}

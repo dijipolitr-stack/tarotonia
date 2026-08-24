@@ -178,7 +178,7 @@ function generatePDFHTML(code, spreadType, lang = 'tr') {
   <div class="card">
     <div class="logo">🔮</div>
     <h1 class="title">Tarotonia</h1>
-    <p class="subtitle">${isTr ? 'Kişiselleştirilmiş AI Tarot Okuması' : 'Personalized AI Tarot Reading'}</p>
+    <p class="subtitle">${isTr ? 'Kişiye Özel Tarot Okuması' : 'Personal Tarot Reading'}</p>
     
     <div class="spread-badge">✦ ${spreadName} (${spread.cards} ${isTr ? 'Kart' : 'Cards'}) ✦</div>
     
@@ -198,11 +198,13 @@ function generatePDFHTML(code, spreadType, lang = 'tr') {
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div>${isTr ? 'Sorunuzu yazın ve kartlarınızı sezgilerinizle seçin' : 'Type your question and choose cards with your intuition'}</div>
+        <div>${isTr ? 'Adınızı ve sorunuzu yazın, kartlarınızı sezgilerinizle seçin' : 'Enter your name and question, then choose your cards intuitively'}</div>
       </div>
       <div class="step">
         <div class="step-num">4</div>
-        <div>${isTr ? 'AI tarot ustanız derinlemesine kişisel yorumunuzu hazırlayacak' : 'Your AI tarot master will prepare a deep personal interpretation'}</div>
+        <div>${isTr
+          ? 'Okumanız hazırlandıktan sonra Etsy üzerinden size gönderilecek'
+          : 'Your reading will be sent to you via Etsy once it is prepared'}</div>
       </div>
     </div>
     
@@ -213,9 +215,9 @@ function generatePDFHTML(code, spreadType, lang = 'tr') {
     </div>
     
     <div class="footer">
-      ${isTr 
-        ? '✨ Her okuma benzersizdir — yapay zeka, kartlarınızın enerjisini derinlemesine yorumlar.<br>Sorularınız için Etsy üzerinden bize mesaj atabilirsiniz.'
-        : '✨ Every reading is unique — AI deeply interprets the energy of your cards.<br>Contact us via Etsy for any questions.'}
+      ${isTr
+        ? '✨ Her okuma benzersizdir, kartlarınız yalnızca sizin için yorumlanır.<br>Sorularınız için Etsy üzerinden bize mesaj atabilirsiniz.'
+        : '✨ Every reading is unique. Your cards are interpreted for you alone.<br>Contact us via Etsy for any questions.'}
     </div>
   </div>
 </body>

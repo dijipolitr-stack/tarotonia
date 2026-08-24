@@ -22,3 +22,8 @@ Thumbs.db
 # Generated Etsy delivery files
 *.pdf
 delivery-*.html
+
+.vercel
+
+# Uretilen teslimat belgeleri
+scripts/*.html
